@@ -16,19 +16,12 @@ function varargout = makeSceneVersions(scene_name, listVersions, StereoMode)
     end
     %background = 0;
     %% blank
-    %blankScene = scene;
-    %blankScene.right = background*ones(size(scene.right));
-    %blankScene.left = background*ones(size(scene.right));
-    %useNonius = 1;
-    sceneScrambled = scene;
-    sceneScrambled.left = scrambleRGB_PS(scene.left);
-    sceneScrambled.right = sceneScrambled.left;
+    blankScene = scene;
+    blankScene.right = background*ones(size(scene.right));
+    blankScene.left = background*ones(size(scene.right));
     useNonius = 1;
-%     for l = nV+1:2*nV
-%         [leftS, rightS] = makeStereoPair(sceneScrambled, d, listVersions{round(l/2)}, useNonius);
-%         varargout{l} = cat(d.catDim, leftS, rightS); 
-%     end
-    [lS, rS] =  makeStereoPair(sceneScrambled, d, 'O', useNonius);
+    
+    [lS, rS] =  makeStereoPair(blankScene, d, 'O', useNonius);
     varargout{nV + 1} =  cat(d.catDim, lS, rS);
 end
 
