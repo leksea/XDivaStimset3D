@@ -14,7 +14,7 @@ function varargout = makeSceneVersions(scene_name, listVersions, StereoMode)
         varargout{l} = cat(d.catDim, left, right);
         
     end
-    %background = 0;
+    background = 0;
     %% blank
     blankScene = scene;
     blankScene.right = background*ones(size(scene.right));
