@@ -41,11 +41,11 @@ function generateAll(listOfScenes, ListofVersions, DisplaySettings, StimFreq, pr
         
         fprintf(f, 'Conditions SO:OS, Trial %d Scene %s\n', i, list_name);
         
-        [sceneS, sceneO, blank1, blank2] = makeSceneVersions(list_name, ListofVersions, DisplaySettings);
+        [sceneS, sceneO, blank] = makeSceneVersions(list_name, ListofVersions, DisplaySettings);
                       
         %% SO, OS trials     
-        writeXDivaStim(mpath.results, double(blank1), sceneS, double(blank2), sceneO, 'SO', i, imageSequence, previewImagesOnly);
-        %writeXDivaStim(mpath.results, double(blank1), sceneO, double(blank2), sceneS, 'OS', i, imageSequence, previewImagesOnly);
+        writeXDivaStim(mpath.results, double(blank), sceneS, double(blank), sceneO, 'SO', i, imageSequence, previewImagesOnly);
+        %writeXDivaStim(mpath.results, double(blank), sceneO, double(blank), sceneS, 'OS', i, imageSequence, previewImagesOnly);
         i = i + 1;
     end
     fprintf(f, 'Set generated on %s', datestr(clock));   
