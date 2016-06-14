@@ -7,37 +7,52 @@ function varargout = makeSceneVersions(scene_name, listVersions, StereoMode)
     
     nV = numel(listVersions);
     varargout = cell(1, nV + 1);
+    useNonius = 0;
     
     for l = 1:nV
-        [left, right] = makeStereoPair(scene, d, listVersions{l});
+        [left, right] = makeStereoPair(scene, d, listVersions{l}, useNonius);
         varargout{l} = cat(d.catDim, left, right);
         
     end
-    background = 0;
+    %background = 0;
     %% blank
-    blankScene = scene;
-    blankScene.right = background*ones(size(scene.right));
-    blankScene.left = background*ones(size(scene.right));
-    
-    [lB, rB] =  makeStereoPair(blankScene, d, 'O');
-    varargout{nV + 1} =  cat(d.catDim, lB, rB);
+    %blankScene = scene;
+    %blankScene.right = background*ones(size(scene.right));
+    %blankScene.left = background*ones(size(scene.right));
+    %useNonius = 1;
+    sceneScrambled = scene;
+    sceneScrambled.left = scrambleRGB_PS(scene.left);
+    sceneScrambled.right = sceneScrambled.left;
+    useNonius = 1;
+%     for l = nV+1:2*nV
+%         [leftS, rightS] = makeStereoPair(sceneScrambled, d, listVersions{round(l/2)}, useNonius);
+%         varargout{l} = cat(d.catDim, leftS, rightS); 
+%     end
+    [lS, rS] =  makeStereoPair(sceneScrambled, d, 'O', useNonius);
+    varargout{nV + 1} =  cat(d.catDim, lS, rS);
 end
 
 
-function [l, r] = makeStereoPair(scene, d, type)
+function [l, r] = makeStereoPair(scene, d, type, useNonius)
   
     [left, right] = getLeftRight(scene, type);
     [shiftSign, crossSign] = getCrossShiftSigns(type);    
-    l = processScene(left, d, shiftSign.L*scene.shift, crossSign.L*scene.offset);
+    %crossPosR = crossSign.L*scene.offset;
+    l = processScene(left, d, shiftSign.L*scene.shift, useNonius);
     if (d.mirrorFlip)
         right = flipdim(right, 2);
     end
-    r = processScene(right, d, shiftSign.R*scene.shift, crossSign.R*scene.offset);    
+    %crossPosR = crossSign.R*scene.offset;
+    r = processScene(right, d, shiftSign.R*scene.shift, -useNonius);    
 end
-function s = processScene(s0, d, shiftVal, crossPos)
-    s1 = imresize(s0, [d.v d.h]);
-    xs = drawCross(s1, 30, crossPos);
-    s = positionScene(xs, [d.v d.h], shiftVal);
+function s = processScene(s0, d, shiftVal, useNonius)
+    if(useNonius)
+        xs = drawNonius(s0, 25, useNonius);
+    else
+        xs = s0;
+    end
+    s1 = imresize(xs, [d.v d.h]);
+    s = positionScene(s1, [d.v d.h], shiftVal);
 end
 function [left, right] = getLeftRight(s, type)
 
